@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 
@@ -18,3 +19,15 @@ class User(AbstractUser):
     
     def __str__(self):
         return f"{self.username} ({self.role})"
+    
+
+    def clean(self):
+         if self.role == self.Role.SUPER_ADMIN and not self.is_superuser:
+            raise ValidationError(
+                {"role": "SUPER_ADMIN role requires is_superuser=True"}
+            )
+         
+        #ensures always runs
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
