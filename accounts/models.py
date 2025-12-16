@@ -5,9 +5,9 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     ROLE_CLIENT = 'client'
-    ROLE_PM = ''
-    ROLE_ENGINEER = ''
-    ROLE_ADMIN = ''
+    ROLE_PM = 'pm'
+    ROLE_ENGINEER = 'engineer'
+    ROLE_ADMIN = 'admin'
 
     #for better string readibility
     ROLE_CHOICES = [
