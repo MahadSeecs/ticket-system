@@ -1,5 +1,7 @@
 from django.db import models
 from django.conf import settings
+from django.core.exceptions import ValidationError
+
 
 User = settings.AUTH_USER_MODEL
 
@@ -36,3 +38,21 @@ class Ticket(models.Model):
 
     def __str__(self):
         return f"[{self.get_status_display()}] {self.title}"
+    
+
+    def clean(self):
+        #assigning if status is OPEN
+        if self.assigned_to and self.status != self.Status.OPEN:
+            raise ValidationError(
+                "Ticket can only be assigned if status is OPEN."
+            )
+
+        #resolving if status is ASSIGNED
+        if self.status == self.Status.RESOLVED and not self.assigned_to:
+            raise ValidationError(
+                "Ticket must be assigned before it can be resolved."
+            )
+
+    def save(self, *args, **kwargs):
+        self.full_clean() 
+        super().save(*args, **kwargs)
